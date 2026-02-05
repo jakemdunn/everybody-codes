@@ -2,13 +2,13 @@ import { styleText } from "node:util";
 import fs from "fs";
 import path from "node:path";
 
-const checkTemplate = (template: string, quest: number) => {
+const checkTemplate = (template: string, quest: string) => {
   const templateDirectory = path.resolve(import.meta.dirname, "../template");
   const targetDirectory = path.resolve(process.cwd(), `./src/quest-${quest}`);
   const targetPath = path.resolve(targetDirectory, `${template}.ts`);
 
-  if (!fs.existsSync(templateDirectory)) {
-    fs.mkdirSync(templateDirectory);
+  if (!fs.existsSync(targetDirectory)) {
+    fs.mkdirSync(targetDirectory);
   }
   if (!fs.existsSync(targetPath)) {
     fs.copyFileSync(
@@ -18,12 +18,12 @@ const checkTemplate = (template: string, quest: number) => {
   }
 };
 export const start = (event: number) => {
-  const quest = parseInt(process.argv[2]);
-  if (!quest || isNaN(quest)) {
+  const quest = process.argv[2];
+  if (!quest || isNaN(parseInt(quest))) {
     console.error(
       styleText(
         "red",
-        'No quest specified. Provide a quest e.g.: "yarn start 1"',
+        'Invalid quest specified. Provide a quest e.g.: "yarn start 1" or "yarn start 1-variant',
       ),
     );
     return;
