@@ -1,0 +1,14 @@
+{
+  "name": "@jakemdunn/everybody-codes-2024",
+  "version": "1.0.0",
+  "description": "Answers for 2025",
+  "main": "index.ts",
+  "author": "Jacob Dunn",
+  "license": "MIT",
+  "type": "module",
+  "exports": "./dist/index.mjs",
+  "scripts": {
+    "start": "tsx watch --env-file=.env index.ts"
+  },
+  "dependencies": {}
+}

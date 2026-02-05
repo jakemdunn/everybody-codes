@@ -1,0 +1,8 @@
+{
+  "name": "@jakemdunn/everybody-codes-runner",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "author": "Jacob Dunn",
+  "type": "module",
+  "license": "MIT"
+}
