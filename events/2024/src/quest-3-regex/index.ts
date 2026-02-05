@@ -1,8 +1,5 @@
 import { runner, Solution } from "@jakemdunn/everybody-codes-runner";
-import { Coord, Grid } from "@jakemdunn/everybody-codes-util/src/grid";
 import inputs from "./inputs";
-
-type Block = "." | "#" | number;
 
 const dig = (
   input: string,
