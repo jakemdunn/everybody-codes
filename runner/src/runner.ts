@@ -1,12 +1,21 @@
 import { styleText } from "node:util";
 
-export type Solution = (input: string) => unknown;
-export interface RunnerConfig {
-  solution: Solution;
+export type Solution<Params extends unknown[] = any[]> = (
+  input: string,
+  ...params: Params
+) => unknown;
+
+type RestParams<T> = T extends (input: string, ...args: infer P) => any
+  ? P
+  : undefined;
+
+export interface RunnerConfig<RunnerSolution extends Solution = Solution> {
+  solution: RunnerSolution;
   testsOnly?: boolean;
   tests: {
     input: string;
-    answer: string | number;
+    params?: RestParams<RunnerSolution>;
+    answer: string | number | BigInt;
   }[];
 }
 
@@ -20,11 +29,11 @@ const partRunner = (
   partIndex: number,
 ) => {
   console.log(styleText("dim", `\n\nPart ${partIndex + 1} ━━━━━ ᕦ(ò_óˇ)ᕤ`));
-  tests.forEach(({ input, answer }, testIndex) => {
+  tests.forEach(({ input, answer, params }, testIndex) => {
     const testLabel = `Test ${partIndex + 1}:${testIndex + 1}`;
     const testMark = `test-${partIndex}-${testIndex}`;
     performance.mark(testMark);
-    const output = solution(input);
+    const output = solution(input, ...(params ?? []));
     performance.measure(testLabel, testMark);
     const time = getTime(testLabel);
     if (output === answer) {
@@ -33,7 +42,7 @@ const partRunner = (
       console.error(
         styleText(
           "red",
-          `${testLabel} failed. (╯°□°）╯︵ ┻━┻\nExpected "${answer}", got "${output}" in ${time}`,
+          `${testLabel} failed. (╯°□°）╯︵ ┻━┻\n  Expected "${answer}", got "${output}" in ${time}`,
         ),
       );
     }
@@ -55,7 +64,7 @@ export const runner = (configs: RunnerConfig[], inputs: string[]) => {
   });
 
   const totalTime = performance.getEntries().reduce<number>((total, entry) => {
-    if (entry.name.startsWith("Test")) {
+    if (entry.name.startsWith("Solution")) {
       return total + entry.duration;
     }
     return total;

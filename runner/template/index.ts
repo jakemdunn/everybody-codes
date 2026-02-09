@@ -5,15 +5,15 @@ const parseInput = (input: string) => {
   return input;
 };
 
-const part1: Solution = (input: string) => {
+const part1: Solution = (input) => {
   const parsed = parseInput(input);
 };
 
-const part2: Solution = (input: string) => {
+const part2: Solution = (input) => {
   const parsed = parseInput(input);
 };
 
-const part3: Solution = (input: string) => {
+const part3: Solution = (input) => {
   const parsed = parseInput(input);
 };
 
