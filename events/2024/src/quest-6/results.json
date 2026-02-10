@@ -1,0 +1,27 @@
+{
+  "timingTotal": 14.396999999999991,
+  "parts": [
+    {
+      "answers": [
+        "RRVPJL@",
+        "RRVPJLNLXLZT@"
+      ],
+      "timing": 0.07687500000000114
+    },
+    {
+      "answers": [
+        "RRBHBDLFWM@"
+      ],
+      "timing": 1.3492499999999978
+    },
+    {
+      "answers": [
+        "RXFMNQQDZLMV@"
+      ],
+      "timing": 12.970874999999992
+    }
+  ],
+  "createdOn": "2026-02-10T15:12:02.599Z",
+  "updated": "2026-02-10T15:57:16.406Z",
+  "quest": "6"
+}

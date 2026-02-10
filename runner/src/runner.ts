@@ -1,4 +1,5 @@
 import { styleText } from "node:util";
+import { RunnerTracking } from "./tracking";
 
 export type Solution<Params extends unknown[] = any[]> = (
   input: string,
@@ -23,6 +24,7 @@ const getTime = (label: string) => {
   const time = performance.getEntriesByName(label);
   return `${time[0].duration.toFixed(4)}ms`;
 };
+
 const partRunner = (
   { solution, tests, testsOnly }: RunnerConfig,
   input: string,
@@ -55,6 +57,11 @@ const partRunner = (
   performance.mark(markName);
   const solve = solution(input);
   performance.measure(label, markName);
+  RunnerTracking.trackPart(
+    partIndex,
+    solve,
+    performance.getEntriesByName(label)[0].duration,
+  );
   console.log(`${label}: "${solve}" in ${getTime(label)}`);
 };
 
@@ -63,12 +70,18 @@ export const runner = (configs: RunnerConfig[], inputs: string[]) => {
     partRunner(part, inputs[index], index);
   });
 
+  console.log(styleText("blue", `\n\nTiming:`));
   const totalTime = performance.getEntries().reduce<number>((total, entry) => {
     if (entry.name.startsWith("Solution")) {
+      console.log(
+        styleText("white", `${entry.name}: ${entry.duration.toFixed(4)}ms`),
+      );
       return total + entry.duration;
     }
     return total;
   }, 0);
+  RunnerTracking.results.timingTotal = totalTime;
+  RunnerTracking.write();
 
-  console.log(styleText("blue", `\n\nTotal Time:\n${totalTime.toFixed(4)}ms`));
+  console.log(styleText("white", `-------\nTotal: ${totalTime.toFixed(4)}ms`));
 };

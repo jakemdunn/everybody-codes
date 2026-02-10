@@ -1,6 +1,7 @@
 import { styleText } from "node:util";
 import fs from "fs";
 import path from "node:path";
+import { RunnerTracking } from "./tracking";
 
 const checkTemplate = (template: string, quest: string) => {
   const templateDirectory = path.resolve(import.meta.dirname, "../template");
@@ -17,6 +18,7 @@ const checkTemplate = (template: string, quest: string) => {
     );
   }
 };
+
 export const start = (event: number) => {
   const quest = process.argv[2];
   if (!quest || isNaN(parseInt(quest))) {
@@ -31,6 +33,8 @@ export const start = (event: number) => {
 
   checkTemplate("index", quest);
   checkTemplate("inputs", quest);
+
+  RunnerTracking.init(quest);
 
   console.error(styleText("blue", `Running Quest ${quest} for ${event}`));
   import(path.resolve(process.cwd(), `./src/quest-${quest}`));
