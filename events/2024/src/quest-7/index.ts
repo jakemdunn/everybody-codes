@@ -50,18 +50,33 @@ const ACTIONS = {
 } as const;
 type Action = keyof typeof ACTIONS;
 
-const part1: Solution = (input) => {
-  const plans = parseInput(input);
-  for (let segment = 0; segment < 10; segment++) {
+const race = (
+  plans: Plan[],
+  continueRacing: (segment: number, laps: number) => boolean,
+  track?: Action[],
+  onLap?: (laps: number, plans: Plan[]) => Plan[],
+) => {
+  for (let segment = 0, laps = 0; continueRacing(segment, laps); segment++) {
+    const trackSegment = track?.[segment % track.length];
+    const trackAction = trackSegment && ACTIONS[trackSegment];
+    if (trackSegment === "S") {
+      laps++;
+      plans = onLap?.(laps, plans) ?? plans;
+    }
     plans.forEach((plan) => {
-      plan.power = Math.max(
-        plan.power +
-          (ACTIONS[plan.actions[segment % plan.actions.length]] ?? 0),
-        0,
-      );
+      const action =
+        trackAction !== undefined && trackAction !== 0
+          ? trackAction
+          : ACTIONS[plan.actions[segment % plan.actions.length]];
+      plan.power = Math.max(plan.power + action, 0);
       plan.essense += plan.power;
     });
   }
+};
+
+const part1: Solution = (input) => {
+  const plans = parseInput(input);
+  race(plans, (segment) => segment < 10);
   plans.sort((a, b) => b.essense - a.essense);
   return plans.map((plan) => plan.label).join("");
 };
@@ -69,21 +84,7 @@ const part1: Solution = (input) => {
 const part2: Solution = (input, inputTrack) => {
   const plans = parseInput(input);
   const track = parseTrack(inputTrack ?? TRACKS.part2);
-  for (let segment = 0, laps = 0; laps < 10; segment++) {
-    const trackSegment = track[segment % track.length];
-    const trackAction = ACTIONS[trackSegment];
-    if (trackSegment === "S") {
-      laps++;
-    }
-    plans.forEach((plan) => {
-      const action =
-        trackAction !== 0
-          ? trackAction
-          : ACTIONS[plan.actions[segment % plan.actions.length]];
-      plan.power = Math.max(plan.power + action, 0);
-      plan.essense += plan.power;
-    });
-  }
+  race(plans, (_, laps) => laps < 10, track);
   plans.sort((a, b) => b.essense - a.essense);
   return plans.map((plan) => plan.label).join("");
 };
@@ -117,26 +118,19 @@ const part3: Solution = (input, inputTrack) => {
     }));
 
   let plans = [...parseInput(input), ...options];
-  for (let segment = 0, laps = 0; laps < 2024; segment++) {
-    const trackSegment = track[segment % track.length];
-    const trackAction = ACTIONS[trackSegment];
-    if (trackSegment === "S") {
-      laps++;
+  race(
+    plans,
+    (_, laps) => laps < 2024,
+    track,
+    (laps, plans) => {
       if (laps % 100 === 0) {
-        plans = plans.filter(
+        return plans.filter(
           (plan, index) => index === 0 || plan.essense > plans[0].essense,
         );
       }
-    }
-    plans.forEach((plan) => {
-      const action =
-        trackAction !== 0
-          ? trackAction
-          : ACTIONS[plan.actions[segment % plan.actions.length]];
-      plan.power = Math.max(plan.power + action, 0);
-      plan.essense += plan.power;
-    });
-  }
+      return plans;
+    },
+  );
   return plans.filter((plan) => plan.essense > plans[0].essense).length;
 };
 
