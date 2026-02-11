@@ -1,15 +1,6 @@
 import { runner, Solution } from "@jakemdunn/everybody-codes-runner";
 import inputs from "./inputs";
 
-const parseInput = (input: string) => parseInt(input);
-
-function* getOddNumbers() {
-  let number = 1;
-  while (true) {
-    yield number;
-    number += 2;
-  }
-}
 const part1: Solution = (input) => {
   const blocks = parseInt(input);
   const limit = Math.round(Math.sqrt(4 * blocks));
